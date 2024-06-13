@@ -1,7 +1,12 @@
 import requests
+from termcolor import colored
 
 
 def check_list(ip_list: list):
+    """Функция принимает в список адресов, проверяет на валидность, взаимодействует с 
+    API сервиса ip-api.com и печатает результат. Если Status==fail, печатает предупреждение
+    и продолжает работу дальше по валидным адресам."""
+    
     try:
         for ip in ip_list:
             response = requests.get(url=f"http://ip-api.com/json/{ip}").json()
@@ -21,15 +26,17 @@ def check_list(ip_list: list):
                           Org=response.get("org"),
                           As_data=response.get("as"),
                           As_name=response.get("asname"),
-                          Reverse=response.get("reverse"),
-                          Mobile=response.get("mobile"),
-                          Proxy=response.get("proxy"),
-                          Hosting=response.get("hosting"),
-                          Query=response.get("query")
+                          Reverse=response.get("reverse")
                           )
 
-        for k, v in result.items():
-            print(k, v)
+            for k, v in result.items():
+                if result["Status"] == "fail":
+                    print(colored(f"WARNING: Invalid IP - {result['IP']}", "red"))
+                    break
+                    
+                
+                else:
+                    print(k, v)
 
     except BaseException:
         print("No connection")
@@ -38,24 +45,32 @@ def check_list(ip_list: list):
 def sort_arg(message: str):
     """В функцию передается один IP адрес. В случае передачи нескольких IP
     адресов, между ними ставится разделитель <,> или символ пробела < >."""
+    
     ip_list = []
 
     if "," in message:
         for ip in message.split(","):
             ip_list.append(ip)
 
-            return check_list(ip_list=ip_list)
+        return check_list(ip_list=ip_list)
 
     elif " " in message:
         for ip in message.split(" "):
             ip_list.append(ip)
-
-            return check_list(ip_list=ip_list)
-
-    else:
-        ip_list.append(message)
         
         return check_list(ip_list=ip_list)
+            
+    elif "," or " " not in message:
+        ip_list.append(message)
+
+        return check_list(ip_list=ip_list)
+
+
+
+    else:
+        print("Input Error, try again!")
+
+        return sort_org(message=str(input("Enter text >>> ")))
     
 
 sort_arg(message=str(input("Enter text >>> ")))
