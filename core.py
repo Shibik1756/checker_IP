@@ -40,10 +40,11 @@ def check_list(ip_list: list):
                         break
                     
                     else:
+                        result["IP"] = colored(ip, "red")
                         print(k, v)
 
         except BaseException:
-            print(clolored("ERROR: No connection", "red"))
+            print(colored("ERROR: No connection", "red"))
 
         
 def sort_arg(message: str):
