@@ -14,7 +14,7 @@ def check_list(ip_list: list):
         try:
             for ip in ip_list:
                 response = requests.get(url=f"http://ip-api.com/json/{ip}").json()
-                result = dict(IP=ip,
+                result = dict(IP=colored(ip, "green"),
                               Status=response.get("status"),
                               Message=response.get("message"),
                               Continent=response.get("continent"),
@@ -35,15 +35,16 @@ def check_list(ip_list: list):
 
                 for k, v in result.items():
                     if result["Status"] == "fail":
-                        print(colored(f"WARNING: Invalid IP - {result['IP']}", "red"))
+                        invalid_ip = ip
+                        print(colored(f"WARNING: Invalid IP - {invalid_ip}", "red"))
 
                         break
                     
                     else:
-                        result["IP"] = colored(ip, "red")
+                        
                         print(k, v)
 
-        except BaseException:
+        except requests.ConnectionError:
             print(colored("ERROR: No connection", "red"))
 
         
@@ -73,7 +74,7 @@ def sort_arg(message: str):
     else:
         print("Input Error, try again!")
 
-        return sort_org(message=str(input("Enter text >>> ")))
+        return sort_arg(message=str(input("Enter text >>> ")))
     
 
 sort_arg(message=str(input("Enter text >>> ")))
