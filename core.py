@@ -69,6 +69,3 @@ def sort_arg(message: str):
         print("Input Error, try again!")
 
         return sort_arg(message=str(input("Enter text >>> ")))
-    
-
-sort_arg(message=str(input("Enter text >>> ")))
