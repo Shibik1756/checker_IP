@@ -2,10 +2,8 @@ import requests
 from termcolor import colored
 
 
-def check_list(ip_list: list):
-    """Функция принимает в список адресов, проверяет на валидность, взаимодействует с 
-    API сервиса ip-api.com и печатает результат. Если Status==fail, печатает предупреждение
-    и продолжает работу дальше по валидным адресам."""
+def displayData(ip_list: list):
+    """Checks the correctness of the data entered by the user and prints the result"""
 
     if "" in ip_list:
         print(colored("ERROR: Empty request", "red"))
@@ -16,21 +14,18 @@ def check_list(ip_list: list):
                 response = requests.get(url=f"http://ip-api.com/json/{ip}").json()
                 result = dict(IP=colored(ip, "green"),
                               Status=response.get("status"),
-                              Message=response.get("message"),
-                              Continent=response.get("continent"),
-                              Continent_code=response.get("continentCode"),
                               Country=response.get("country"),
                               Country_Code=response.get("countryCode"),
                               Region=response.get("region"),
                               Region_name=response.get("regionName"),
                               City=response.get("city"),
-                              District=response.get("district"),
-                              ZIP=response.get("zip"),
                               Isp=response.get("isp"),
                               Org=response.get("org"),
                               As_data=response.get("as"),
                               As_name=response.get("asname"),
-                              Reverse=response.get("reverse")
+                              Reverse=response.get("reverse"),
+                              Hosting=response.get("hosting"),
+                              Proxy=response.get("proxy")
                               )
 
                 for k, v in result.items():
@@ -49,8 +44,7 @@ def check_list(ip_list: list):
 
         
 def sort_arg(message: str):
-    """В функцию передается один IP адрес. В случае передачи нескольких IP
-    адресов, между ними ставится разделитель <,> или символ пробела < >."""
+    """The function takes user parameters and passes them to displayData()"""
     
     ip_list = []
 
@@ -58,18 +52,18 @@ def sort_arg(message: str):
         for ip in message.split(","):
             ip_list.append(ip)
 
-        return check_list(ip_list=ip_list)
+        return displayData(ip_list=ip_list)
 
     elif " " in message:
         for ip in message.split(" "):
             ip_list.append(ip)
         
-        return check_list(ip_list=ip_list)
+        return displayData(ip_list=ip_list)
             
     elif "," or " " not in message:
         ip_list.append(message)
 
-        return check_list(ip_list=ip_list)
+        return displayData(ip_list=ip_list)
 
     else:
         print("Input Error, try again!")
